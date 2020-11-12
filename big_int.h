@@ -3,6 +3,8 @@
 #include<string>
 #include<algorithm>
 #include<numeric>
+
+
 using namespace std;
 
 struct BigInt {
@@ -45,6 +47,16 @@ struct BigInt {
 		}
 		
 		return ret;
+	}
+
+	void trim() {
+		if (!v.empty()) {
+			auto i = v.end()-1;
+			while (*i == 0) {
+				v.erase(i);
+				i = v.end()-1;
+			}
+		}
 	}
 
 	int size() const  {
@@ -121,13 +133,16 @@ struct BigInt {
 	BigInt operator * (const BigInt& other) const {
 		BigInt b1(*this);
 		BigInt b2(other);
+		// pad smaller int with leading zeroes to make both int of same size
 		if (b1.size() > b2.size()) {
-			for (auto i = 0; i < b1.size() - b2.size(); i++) {
+			auto diff = b1.size() - b2.size();
+			for (auto i = 0; i < diff; i++) {
 				b2.addDigit(0);
 			}
 		}
 		else {
-			for (auto i = 0; i < b2.size() - b1.size(); i++) {
+			auto diff = b2.size() - b1.size();
+			for (auto i = 0; i < diff; i++) {
 				b1.addDigit(0);
 			}
 		}
@@ -171,36 +186,3 @@ private:
 	vector<int> v;
 	
 };
-ostream& operator << (ostream& os, BigInt b)
-{
-	os << b.getIntAsString();
-	return os;
-}
-
-
-
-int main() {
-	// 3141592653589793238462643383279502884197169399375105820974944592
-	// 2718281828459045235360287471352662497757247093699959574966967627
-	/*/vector<int> v1{ 3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6,4,3,3,8,3,2,7,9,5,0,2,8,8,4,1,9,7,1,6,9,3,9,9,3,7,5,1,0,5,8,2,0,9,7,4,9,4,4,5,9,2 };
-	/vector<int> v2{ 2,7,1,8,2,8,1,8,2,8,4,5,9,0,4,5,2,3,5,3,6,0,2,8,7,4,7,1,3,5,2,6,6,2,4,9,7,7,5,7,2,4,7,0,9,3,6,9,9,9,5,9,5,7,4,9,6,6,9,6,7,6,2,7 };*/
-	
-	BigInt b1{"3141592653589793238462643383279502884197169399375105820974944592"};
-	BigInt b2{"2718281828459045235360287471352662497757247093699959574966967627"};
-	string s = b1.getIntAsString();
-	BigInt zero("");
-	cout << zero.isZero() << endl;
-
-	BigInt s1("58321");
-	auto p = s1.split();
-	//s1.multiplyByTenPower(0);
-	BigInt s2("938245");
-	auto p2 = s2.split();
-	auto p3 = BigInt("2").split();
-	auto res = s1 + s2;
-	cout << res << endl;
-	cout << BigInt("1000000") + BigInt("23") << endl;
-
-	cout << BigInt("3141592653589793238462643383279502884197169399375105820974944592") * BigInt("2718281828459045235360287471352662497757247093699959574966967627") << endl;
-	return 0;
-}
