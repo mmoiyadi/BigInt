@@ -47,3 +47,70 @@ TEST_CASE("Integers are multiplied correctly", "[product]") {
 	}
 }
 
+TEST_CASE("Integers are added correctly", "[sum]") {
+	SECTION("sum big integers") {
+		BigInt b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
+		BigInt b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
+		auto sum = b1 + b2;
+		sum.trim();
+		REQUIRE(sum.getIntAsString() == "5859874482048838473822930854632165381954416493075065395941912219");
+	}
+
+	SECTION("sum small integers") {
+		BigInt b1{ "3" };
+		BigInt b2{ "2" };
+		auto sum = b1 + b2;
+		sum.trim();
+		REQUIRE(sum.getIntAsString() == "5");
+	}
+
+	SECTION("sum mid sized integers") {
+		BigInt b1{ "98346" };
+		BigInt b2{ "248356" };
+		auto sum = b1 + b2;
+		sum.trim();
+		REQUIRE(sum.getIntAsString() == "346702");
+	}
+	SECTION("sum mid sized integers") {
+		BigInt b1{ "24424819176" };
+		BigInt b2{ "59870263341" };
+		auto sum = b1 + b2;
+		sum.trim();
+		REQUIRE(sum.getIntAsString() == "84295082517");
+	}
+	SECTION("sum mid sized integers") {
+		BigInt b1{ "24424819176" };
+		BigInt b2{ "5987026" };
+		auto sum = b1 + b2;
+		sum.trim();
+		REQUIRE(sum.getIntAsString() == "24430806202");
+	}
+}
+
+TEST_CASE("Test for zero integers", "[zero]") {
+	SECTION("zero test 1") {
+		BigInt b1;
+		REQUIRE(b1.isZero() == true);
+	}
+	SECTION("zero test 2") {
+		BigInt b1("");
+		REQUIRE(b1.isZero() == true);
+	}
+	SECTION("zero test 3") {
+		BigInt b1("00000000000000000000000000000000000000000000000000000000000000000000000");
+		REQUIRE(b1.isZero() == true);
+	}
+	SECTION("non-zero test 1") {
+		BigInt b1("00000000000000000000000000000000000000000000000000000000000000000000001");
+		REQUIRE(b1.isZero() == false);
+	}
+	SECTION("non-zero test 2") {
+		BigInt b1("0001000");
+		REQUIRE(b1.isZero() == false);
+	}
+	SECTION("non-zero test 3") {
+		BigInt b1("01234567890");
+		REQUIRE(b1.isZero() == false);
+	}
+}
+
