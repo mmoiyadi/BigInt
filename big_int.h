@@ -31,6 +31,7 @@ struct BigInt {
 
 	pair<BigInt, BigInt> split() const;
 
+	// The multiplication is implemented using the Karatsuba algorithm (divide and conquer approach)
 	BigInt multiply(const BigInt& other, int size) const;
 
 	// The multiplication is implemented using the Karatsuba algorithm (divide and conquer approach)

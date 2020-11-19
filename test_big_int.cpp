@@ -87,7 +87,6 @@ pair<BigInt, BigInt> BigInt::split() const {
 
 BigInt BigInt::multiply(const BigInt& other, int size) const {
 	BigInt ret;
-	int carry = 0;
 	if (size == 1) {
 		auto res = v[0] * other.v[0];
 		if (res > 9) {
@@ -152,7 +151,6 @@ BigInt& BigInt::operator=(const BigInt& other) {
 }
 
 BigInt BigInt::operator +(const BigInt& other) {
-	auto len = min(size(), other.size());
 	BigInt ret;
 	int carry = 0;
 	auto it1b = v.begin(), it1e = v.end();
