@@ -7,5 +7,7 @@ Catch C++ Test framework is used to test the operations. This is a work in progr
 Clone the repo, build the solution and run 
 
 ## For Others
-Makefile coming soon....
+``` >make ```
+
+``` >./test_big_int ```
 
