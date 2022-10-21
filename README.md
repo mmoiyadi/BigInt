@@ -1,5 +1,5 @@
 # BigInt
-C++ repo to perform mathematical operation on very big integers
+C++ repo to perform arithmetic operation on very big integers
 
 Catch C++ Test framework is used to test the operations. This is a work in progress repository so feel free to point out bugs. 
 
@@ -7,5 +7,7 @@ Catch C++ Test framework is used to test the operations. This is a work in progr
 Clone the repo, build the solution and run 
 
 ## For Others
-Makefile coming soon....
+``` >make ```
+
+``` >./test_big_int ```
 
