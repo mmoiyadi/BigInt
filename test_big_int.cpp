@@ -1,288 +1,177 @@
 #define CATCH_CONFIG_MAIN
 #include "Catch.h"
 #include "big_int.h"
-ostream& operator << (ostream& os, BigInt b)
-{
-	os << b.toString();
-	return os;
-}
 
-void BigInt::init(string s) {
-	bool isNumber = !s.empty() && std::find_if(s.begin(),
-		s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
-	if (isNumber) {
-		for (auto c = s.rbegin(); c != s.rend(); c++) {
-			v.push_back(*c - 48);
-		}
+
+TEST_CASE("Factorial") {
+	SECTION("Factorial") {
+		big_int_operations bio;
+		auto fact0 = bio.factorial(0);
+		auto fact1 = bio.factorial(1);
+		auto fact2 = bio.factorial(2);
+		auto fact5 = bio.factorial(5);
+		auto fact10 = bio.factorial(10);
+		fact10.trim();
+		auto fact11 = bio.factorial(11);
+		fact11.trim();
+		auto fact12 = bio.factorial(12);
+		fact12.trim();
+		//auto fact20 = bio.factorial(20);
+		//fact20.trim();
+		/*auto fact50 = bio.factorial(50);
+		auto fact100 = bio.factorial(100);
+		auto fact200 = bio.factorial(200);
+		auto fact300 = bio.factorial(300);*/
+
+		REQUIRE(fact0.to_string() == "1");
+		REQUIRE(fact1.to_string() == "1");
+		REQUIRE(fact2.to_string() == "2");
+		REQUIRE(fact5.to_string() == "120");
+		REQUIRE(fact10.to_string() == "3628800");
+		REQUIRE(fact11.to_string() == "39916800");
+		REQUIRE(fact12.to_string() == "479001600");
+		//REQUIRE(fact30.to_string() == "265252859812191058636308480000000");
+		/*REQUIRE(fact50.to_string() == "12586269025");
+		REQUIRE(fact100.to_string() == "354224848179261915075");
+		REQUIRE(fact200.to_string() == "280571172992510140037611932413038677189525");
+		REQUIRE(fact300.to_string() == "222232244629420445529739893461909967206666939096499764990979600");*/
 	}
 }
+#ifdef RUN_ALL_TESTS
+TEST_CASE("Fibonacci") {
+	SECTION("Fibonacci") {
+		big_int_operations bio;
+		auto fib0 = bio.fibonacci(0);
+		auto fib1 = bio.fibonacci(1);
+		auto fib2 = bio.fibonacci(2);
+		auto fib5 = bio.fibonacci(5);
+		auto fib10 = bio.fibonacci(10);
+		auto fib50 = bio.fibonacci(50);
+		auto fib100 = bio.fibonacci(100);
+		auto fib200 = bio.fibonacci(200);
+		auto fib300 = bio.fibonacci(300);
 
-BigInt::BigInt(string s) {
-	init(s);
-}
-
-BigInt::BigInt() {
-
-}
-
-BigInt::BigInt(const BigInt& other) {
-	string sOther = other.toString();
-	init(sOther);
-}
-
-string BigInt::toString() const {
-	string ret;
-	if (!v.empty()) {
-		for (auto i = v.rbegin(); i != v.rend(); i++) {
-			ret.push_back(*i + 48);
-		}
+		REQUIRE(fib0.to_string() == "0");
+		REQUIRE(fib1.to_string() == "1");
+		REQUIRE(fib2.to_string() == "1");
+		REQUIRE(fib5.to_string() == "5");
+		REQUIRE(fib10.to_string() == "55");
+		REQUIRE(fib50.to_string() == "12586269025");
+		REQUIRE(fib100.to_string() == "354224848179261915075");
+		REQUIRE(fib200.to_string() == "280571172992510140037611932413038677189525");
+		REQUIRE(fib300.to_string() == "222232244629420445529739893461909967206666939096499764990979600");
 	}
 
-	return ret;
-}
-
-void BigInt::trim() {
-	if (!v.empty()) {
-		auto i = v.end() - 1;
-		while (*i == 0) {
-			v.erase(i);
-			i = v.end() - 1;
-		}
-	}
-}
-
-int BigInt::size() const {
-	return v.size();
-}
-
-void BigInt::multiplyByTenPower(int power) {
-	for (auto i = 0; i < power; i++) {
-		v.insert(v.begin(), 0);
-	}
-}
-
-bool BigInt::isZero() {
-	return v.empty() || all_of(v.begin(), v.end(), [](int n) {return n == 0; });
-}
-
-pair<BigInt, BigInt> BigInt::split() const {
-	int sz = size();
-	if (sz == 1) {
-		return make_pair(BigInt(), BigInt(*this));
-	}
-	else {
-		BigInt left, right;
-		auto it = v.begin();
-		auto offset = ceil((double)sz / 2);
-		auto mid = v.begin() + offset;
-		for (; it != mid; ++it) {
-			left.addDigit(*it);
-			if (it + offset != v.end())
-				right.addDigit(*(it + offset));
-		}
-		return make_pair(right, left);
-	}
-
-}
-
-BigInt BigInt::multiply(const BigInt& other, int size) const {
-	BigInt ret;
-	if (size == 1) {
-		auto res = v[0] * other.v[0];
-		if (res > 9) {
-			auto div = res / 10;
-			res = res % 10;
-			ret.addDigit(res);
-			ret.addDigit(div);
-		}
-		else {
-			ret.addDigit(res);
-		}
-
-	}
-	else {
-		auto ab = split();
-		auto a = ab.first;
-		auto b = ab.second;
-		auto cd = other.split();
-		auto c = cd.first;
-		auto d = cd.second;
-		auto first = a * c;
-		auto sz = size % 2 == 0 ? size : size + 1;
-		first.multiplyByTenPower(sz);
-		auto ad = a * d;
-		auto bc = b * c;
-		auto second = ad + bc;
-		second.multiplyByTenPower(sz / 2);
-		auto third = b * d;
-		ret = first + second + third;
-
-	}
-	return ret;
-}
-
-void BigInt::addDigit(int d) {
-	v.push_back(d);
-}
-
-BigInt BigInt::operator*(const BigInt& other) const {
-	BigInt b1(*this);
-	BigInt b2(other);
-	// pad smaller int with leading zeroes to make both int of same size
-	if (b1.size() > b2.size()) {
-		auto diff = b1.size() - b2.size();
-		for (auto i = 0; i < diff; i++) {
-			b2.addDigit(0);
-		}
-	}
-	else {
-		auto diff = b2.size() - b1.size();
-		for (auto i = 0; i < diff; i++) {
-			b1.addDigit(0);
-		}
-	}
-	return b1.multiply(b2, b1.size());
-}
-
-BigInt& BigInt::operator=(const BigInt& other) {
-	v.clear();
-	init(other.toString());
-	return *this;
-}
-
-BigInt BigInt::operator +(const BigInt& other) {
-	BigInt ret;
-	int carry = 0;
-	auto it1b = v.begin(), it1e = v.end();
-	auto it2b = other.v.begin(), it2e = other.v.end();
-	while (it1b != it1e || it2b != it2e) {
-		auto f = (it1b == it1e) ? 0 : *it1b;
-		auto s = (it2b == it2e) ? 0 : *it2b;
-		int res = f + s + carry;
-		if (res > 9) {
-			res = res % 10;
-			carry = 1;
-		}
-		else {
-			carry = 0;
-		}
-		ret.addDigit(res);
-		if (it1b != it1e)
-			++it1b;
-		if (it2b != it2e)
-			++it2b;
-	}
-
-	if (carry > 0) {
-		ret.addDigit(carry);
-	}
-	return ret;
+	
 }
 
 TEST_CASE("Integers are multiplied correctly", "[product]") {
-	SECTION("multiply big integers") {
-		BigInt b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
-		BigInt b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
+SECTION("multiply big integers") {
+		big_int b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
+		big_int b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
+		auto start_time = chrono::high_resolution_clock::now();
 		auto product = b1 * b2;
 		product.trim();
-		REQUIRE(product.toString() == "8539734222673567065463550869546574495034888535765114961879601127067743044893204848617875072216249073013374895871952806582723184");
+		auto total_time = chrono::high_resolution_clock::now() - start_time;
+		REQUIRE(product.to_string() == "8539734222673567065463550869546574495034888535765114961879601127067743044893204848617875072216249073013374895871952806582723184");
 	}
 
 	SECTION("multiply small integers") {
-		BigInt b1{ "3" };
-		BigInt b2{ "2" };
+		big_int b1{ "3" };
+		big_int b2{ "2" };
 		auto product = b1 * b2;
 		product.trim();
-		REQUIRE(product.toString() == "6");
+		REQUIRE(product.to_string() == "6");
 	}
 
 	SECTION("multiply mid sized integers") {
-		BigInt b1{ "98346" };
-		BigInt b2{ "248356" };
+		big_int b1{ "98346" };
+		big_int b2{ "248356" };
 		auto product = b1 * b2;
 		product.trim();
-		REQUIRE(product.toString() == "24424819176");
+		REQUIRE(product.to_string() == "24424819176");
 	}
 	SECTION("multiply mid sized integers") {
-		BigInt b1{ "24424819176" };
-		BigInt b2{ "59870263341" };
+		big_int b1{ "24424819176" };
+		big_int b2{ "59870263341" };
 		auto product = b1 * b2;
 		product.trim();
-		REQUIRE(product.toString() == "1462320356123426627016");
+		REQUIRE(product.to_string() == "1462320356123426627016");
 	}
 	SECTION("multiply mid sized integers") {
-		BigInt b1{ "24424819176" };
-		BigInt b2{ "5987026" };
+		big_int b1{ "24424819176" };
+		big_int b2{ "5987026" };
 		auto product = b1 * b2;
 		product.trim();
-		REQUIRE(product.toString() == "146232027452010576");
+		REQUIRE(product.to_string() == "146232027452010576");
 	}
 }
 
 TEST_CASE("Integers are added correctly", "[sum]") {
 	SECTION("sum big integers") {
-		BigInt b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
-		BigInt b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
+		big_int b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
+		big_int b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
 		auto sum = b1 + b2;
 		sum.trim();
-		REQUIRE(sum.toString() == "5859874482048838473822930854632165381954416493075065395941912219");
+		REQUIRE(sum.to_string() == "5859874482048838473822930854632165381954416493075065395941912219");
 	}
 
 	SECTION("sum small integers") {
-		BigInt b1{ "3" };
-		BigInt b2{ "2" };
+		big_int b1{ "3" };
+		big_int b2{ "2" };
 		auto sum = b1 + b2;
 		sum.trim();
-		REQUIRE(sum.toString() == "5");
+		REQUIRE(sum.to_string() == "5");
 	}
 
 	SECTION("sum mid sized integers") {
-		BigInt b1{ "98346" };
-		BigInt b2{ "248356" };
+		big_int b1{ "98346" };
+		big_int b2{ "248356" };
 		auto sum = b1 + b2;
 		sum.trim();
-		REQUIRE(sum.toString() == "346702");
+		REQUIRE(sum.to_string() == "346702");
 	}
 	SECTION("sum mid sized integers") {
-		BigInt b1{ "24424819176" };
-		BigInt b2{ "59870263341" };
+		big_int b1{ "24424819176" };
+		big_int b2{ "59870263341" };
 		auto sum = b1 + b2;
 		sum.trim();
-		REQUIRE(sum.toString() == "84295082517");
+		REQUIRE(sum.to_string() == "84295082517");
 	}
 	SECTION("sum mid sized integers") {
-		BigInt b1{ "24424819176" };
-		BigInt b2{ "5987026" };
+		big_int b1{ "24424819176" };
+		big_int b2{ "5987026" };
 		auto sum = b1 + b2;
 		sum.trim();
-		REQUIRE(sum.toString() == "24430806202");
+		REQUIRE(sum.to_string() == "24430806202");
 	}
 }
 
 TEST_CASE("Test for zero integers", "[zero]") {
 	SECTION("zero test 1") {
-		BigInt b1;
-		REQUIRE(b1.isZero() == true);
+		big_int b1;
+		REQUIRE(b1.is_zero() == true);
 	}
 	SECTION("zero test 2") {
-		BigInt b1("");
-		REQUIRE(b1.isZero() == true);
+		big_int b1("");
+		REQUIRE(b1.is_zero() == true);
 	}
 	SECTION("zero test 3") {
-		BigInt b1("00000000000000000000000000000000000000000000000000000000000000000000000");
-		REQUIRE(b1.isZero() == true);
+		big_int b1("00000000000000000000000000000000000000000000000000000000000000000000000");
+		REQUIRE(b1.is_zero() == true);
 	}
 	SECTION("non-zero test 1") {
-		BigInt b1("00000000000000000000000000000000000000000000000000000000000000000000001");
-		REQUIRE(b1.isZero() == false);
+		big_int b1("00000000000000000000000000000000000000000000000000000000000000000000001");
+		REQUIRE(b1.is_zero() == false);
 	}
 	SECTION("non-zero test 2") {
-		BigInt b1("0001000");
-		REQUIRE(b1.isZero() == false);
+		big_int b1("0001000");
+		REQUIRE(b1.is_zero() == false);
 	}
 	SECTION("non-zero test 3") {
-		BigInt b1("01234567890");
-		REQUIRE(b1.isZero() == false);
+		big_int b1("01234567890");
+		REQUIRE(b1.is_zero() == false);
 	}
 }
 
+#endif

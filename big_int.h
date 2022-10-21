@@ -7,40 +7,53 @@
 
 using namespace std;
 
-struct BigInt {
+struct big_int {
 	void init(string s);
-	BigInt(string s);
+	big_int(string s);
+	big_int(int s);
 
-	BigInt();
+	big_int();
 
-	BigInt(const BigInt& other);
+	big_int(const big_int& other);
 
-	BigInt& operator=(const BigInt& other);
+	big_int& operator=(const big_int& other);
 
-	friend ostream& operator << (ostream& os, BigInt b);
+	friend ostream& operator << (ostream& os, big_int b);
 
-	string toString() const;
+	string to_string() const;
 
 	void trim();
 
 	int size() const;
 
-	void multiplyByTenPower(int power);
+	void multiply_by_ten_power(int power);
 
-	bool isZero();
+	bool is_zero();
 
-	pair<BigInt, BigInt> split() const;
-
-	// The multiplication is implemented using the Karatsuba algorithm (divide and conquer approach)
-	BigInt multiply(const BigInt& other, int size) const;
+	// Split the integer into two halves and return a pair
+	pair<big_int, big_int> split() const;
 
 	// The multiplication is implemented using the Karatsuba algorithm (divide and conquer approach)
-	BigInt operator * (const BigInt& other) const;
+	big_int multiply(const big_int& other, int size) const;
 
-	BigInt operator +(const BigInt& other);
+	void normalize(big_int& a, big_int& b) const ;
+
+	// The multiplication is implemented using the Karatsuba algorithm (divide and conquer approach)
+	big_int operator * (const big_int& other) const;
+
+	big_int operator +(const big_int& other);
 
 private:
-	void addDigit(int d);
+	void add_digit(int d);
 	vector<int> v;
 	
+};
+
+class big_int_operations {
+public:	
+	big_int fibonacci(int n);
+	big_int factorial(int n);
+private:
+	big_int fib(int n, vector< big_int >& f);
+	big_int fact(int n, vector< big_int >& f);
 };

@@ -18,6 +18,9 @@
     <ClCompile Include="..\test_big_int.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\big_int.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\big_int.h">
