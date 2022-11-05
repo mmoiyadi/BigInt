@@ -37,7 +37,6 @@ TEST_CASE("Factorial") {
 		REQUIRE(fact300.to_string() == "222232244629420445529739893461909967206666939096499764990979600");*/
 	}
 }
-#ifdef RUN_ALL_TESTS
 TEST_CASE("Fibonacci") {
 	SECTION("Fibonacci") {
 		big_int_operations bio;
@@ -64,6 +63,7 @@ TEST_CASE("Fibonacci") {
 
 	
 }
+
 
 TEST_CASE("Integers are multiplied correctly", "[product]") {
 SECTION("multiply big integers") {
@@ -173,5 +173,5 @@ TEST_CASE("Test for zero integers", "[zero]") {
 		REQUIRE(b1.is_zero() == false);
 	}
 }
-
+#ifdef RUN_ALL_TESTS
 #endif
