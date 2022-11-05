@@ -65,8 +65,8 @@ TEST_CASE("Fibonacci") {
 }
 
 
-TEST_CASE("Integers are multiplied correctly", "[product]") {
-SECTION("multiply big integers") {
+TEST_CASE("Test integers are multiplied correctly", "[product]") {
+SECTION("product test: big integers") {
 		big_int b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
 		big_int b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
 		auto start_time = chrono::high_resolution_clock::now();
@@ -76,7 +76,7 @@ SECTION("multiply big integers") {
 		REQUIRE(product.to_string() == "8539734222673567065463550869546574495034888535765114961879601127067743044893204848617875072216249073013374895871952806582723184");
 	}
 
-	SECTION("multiply small integers") {
+	SECTION("product test: small integers") {
 		big_int b1{ "3" };
 		big_int b2{ "2" };
 		auto product = b1 * b2;
@@ -84,31 +84,45 @@ SECTION("multiply big integers") {
 		REQUIRE(product.to_string() == "6");
 	}
 
-	SECTION("multiply mid sized integers") {
+	SECTION("product test: mid sized integers") {
 		big_int b1{ "98346" };
 		big_int b2{ "248356" };
 		auto product = b1 * b2;
 		product.trim();
 		REQUIRE(product.to_string() == "24424819176");
 	}
-	SECTION("multiply mid sized integers") {
+	SECTION("product test: mid sized integers 2") {
 		big_int b1{ "24424819176" };
 		big_int b2{ "59870263341" };
 		auto product = b1 * b2;
 		product.trim();
 		REQUIRE(product.to_string() == "1462320356123426627016");
 	}
-	SECTION("multiply mid sized integers") {
+	SECTION("product test: mid sized integers 3") {
 		big_int b1{ "24424819176" };
 		big_int b2{ "5987026" };
 		auto product = b1 * b2;
 		product.trim();
 		REQUIRE(product.to_string() == "146232027452010576");
 	}
+  SECTION("product test: multiplication with zero is zero") {
+		big_int num{ "24424819176" };
+		big_int zero;
+		auto product = num * zero;
+		product.trim();
+		REQUIRE(product.is_zero());
+	}
+  SECTION("product test: multiplication with one is same number") {
+		big_int num{ "24424819176" };
+		big_int one{"1"};
+		auto product = num * one;
+		product.trim();
+		REQUIRE(product.to_string() == num.to_string());
+	}
 }
 
-TEST_CASE("Integers are added correctly", "[sum]") {
-	SECTION("sum big integers") {
+TEST_CASE("Test integers are added correctly", "[sum]") {
+	SECTION("sum: big integers") {
 		big_int b1{ "3141592653589793238462643383279502884197169399375105820974944592" };
 		big_int b2{ "2718281828459045235360287471352662497757247093699959574966967627" };
 		auto sum = b1 + b2;
@@ -116,7 +130,7 @@ TEST_CASE("Integers are added correctly", "[sum]") {
 		REQUIRE(sum.to_string() == "5859874482048838473822930854632165381954416493075065395941912219");
 	}
 
-	SECTION("sum small integers") {
+	SECTION("sum test: small integers") {
 		big_int b1{ "3" };
 		big_int b2{ "2" };
 		auto sum = b1 + b2;
@@ -124,51 +138,67 @@ TEST_CASE("Integers are added correctly", "[sum]") {
 		REQUIRE(sum.to_string() == "5");
 	}
 
-	SECTION("sum mid sized integers") {
+	SECTION("sum test: mid sized integers") {
 		big_int b1{ "98346" };
 		big_int b2{ "248356" };
 		auto sum = b1 + b2;
 		sum.trim();
 		REQUIRE(sum.to_string() == "346702");
 	}
-	SECTION("sum mid sized integers") {
+	SECTION("sum: mid sized integers 2") {
 		big_int b1{ "24424819176" };
 		big_int b2{ "59870263341" };
 		auto sum = b1 + b2;
 		sum.trim();
 		REQUIRE(sum.to_string() == "84295082517");
 	}
-	SECTION("sum mid sized integers") {
+	SECTION("sum: mid sized integers 3") {
 		big_int b1{ "24424819176" };
 		big_int b2{ "5987026" };
 		auto sum = b1 + b2;
 		sum.trim();
 		REQUIRE(sum.to_string() == "24430806202");
 	}
+  SECTION("sum: sum with zero is same number") {
+		big_int num{ "24424819176" };
+		big_int zero;
+		auto sum = num + zero;
+		sum.trim();
+		REQUIRE(sum.to_string() == num.to_string());
+	}
+  SECTION("sum: sum with same number is product of number with two") {
+		big_int num{ "24424819176" };
+		big_int two{"2"};
+		auto sum_with_num = num + num;
+		sum_with_num.trim();
+    auto product_with_two = num * two;
+    product_with_two.trim();
+		REQUIRE(sum_with_num.to_string() == product_with_two.to_string());
+	}
 }
 
 TEST_CASE("Test for zero integers", "[zero]") {
-	SECTION("zero test 1") {
+	SECTION("zero test: no value is zero") {
 		big_int b1;
 		REQUIRE(b1.is_zero() == true);
 	}
-	SECTION("zero test 2") {
+	SECTION("zero test: empty string is zero") {
 		big_int b1("");
 		REQUIRE(b1.is_zero() == true);
 	}
-	SECTION("zero test 3") {
+	SECTION("zero test: all zeros is zero") {
 		big_int b1("00000000000000000000000000000000000000000000000000000000000000000000000");
 		REQUIRE(b1.is_zero() == true);
 	}
-	SECTION("non-zero test 1") {
+	SECTION("non-zero test: leading zeros followed by non-zero is non-zero") {
 		big_int b1("00000000000000000000000000000000000000000000000000000000000000000000001");
 		REQUIRE(b1.is_zero() == false);
 	}
-	SECTION("non-zero test 2") {
+	SECTION("non-zero test: leading zeros followed by non-zero followed by zeros is non-zero") {
 		big_int b1("0001000");
 		REQUIRE(b1.is_zero() == false);
 	}
-	SECTION("non-zero test 3") {
+	SECTION("non-zero test: non-zero value is non-zero") {
 		big_int b1("01234567890");
 		REQUIRE(b1.is_zero() == false);
 	}
