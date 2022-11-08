@@ -98,6 +98,13 @@ SECTION("product test: big integers") {
 		product.trim();
 		REQUIRE(product.to_string() == "1462320356123426627016");
 	}
+  SECTION("product test: mid sized integers 3") {
+		big_int b1{ "123456789" };
+		big_int b2{ "987654321" };
+		auto product = b1 * b2;
+		product.trim();
+		REQUIRE(product.to_string() == "121932631112635269");
+	}
 	SECTION("product test: mid sized integers 3") {
 		big_int b1{ "24424819176" };
 		big_int b2{ "5987026" };
@@ -117,6 +124,33 @@ SECTION("product test: big integers") {
 		big_int one{"1"};
 		auto product = num * one;
 		product.trim();
+		REQUIRE(product.to_string() == num.to_string());
+	}
+  SECTION("product test: multiplication with ten") {
+		big_int num{ "24424819176" };
+		big_int one{"10"};
+		auto product = num * one;
+		product.trim();
+    num.multiply_by_ten_power(1);
+    num.trim();
+		REQUIRE(product.to_string() == num.to_string());
+	}
+  SECTION("product test: multiplication with hundred") {
+		big_int num{ "24424819176" };
+		big_int one{"100"};
+		auto product = num * one;
+		product.trim();
+    num.multiply_by_ten_power(2);
+    num.trim();
+		REQUIRE(product.to_string() == num.to_string());
+	}
+  SECTION("product test: multiplication with thousand") {
+		big_int num{ "24424819176" };
+		big_int one{"1000"};
+		auto product = num * one;
+		product.trim();
+    num.multiply_by_ten_power(3);
+    num.trim();
 		REQUIRE(product.to_string() == num.to_string());
 	}
 }
